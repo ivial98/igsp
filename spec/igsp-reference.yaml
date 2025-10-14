@@ -1,0 +1,45 @@
+openapi: 3.1.0
+info:
+  title: iGSP Reference API
+  version: 1.0.0
+  description: |
+    iGaming Standard Protocol — Reference API for providers.
+servers:
+  - url: https://api.igsp.dev/v1
+paths:
+  /games:
+    get:
+      summary: List available games
+      responses:
+        '200':
+          description: List of games
+  /sessions:
+    post:
+      summary: Create a new gaming session
+      responses:
+        '201':
+          description: Session created
+  /providers:
+    get:
+      summary: List game providers
+      responses:
+        '200':
+          description: List of providers
+  /types:
+    get:
+      summary: List game types
+      responses:
+        '200':
+          description: List of types
+  /currencies:
+    get:
+      summary: List supported currencies
+      responses:
+        '200':
+          description: List of currencies
+  /countries:
+    get:
+      summary: List supported countries
+      responses:
+        '200':
+          description: List of countries
