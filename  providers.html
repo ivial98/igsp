@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>iGSP Providers API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: system-ui, sans-serif;
+        background: #fff;
+      }
+      #redoc-container {
+        height: 100vh;
+      }
+      header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: #111827;
+        color: #f3f4f6;
+        padding: 0.8rem 1.5rem;
+        font-weight: 600;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      header a {
+        color: #60a5fa;
+        text-decoration: none;
+      }
+      header a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>🎮 iGSP – Providers API</div>
+      <a href="./">← Back to Overview</a>
+    </header>
+    <div id="redoc-container"></div>
+    <script>
+      Redoc.init('spec/igsp-providers.yaml', {
+        scrollYOffset: 50,
+        theme: { colors: { primary: { main: '#2563eb' } } },
+      }, document.getElementById('redoc-container'));
+    </script>
+  </body>
+</html>

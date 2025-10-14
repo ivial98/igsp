@@ -34,58 +34,12 @@ It introduces a unified set of endpoints covering games, sessions, providers, cu
 
 ---
 
-## 🚀 Quick View
+## 🧭 API Documentation
 
-Below you can browse live interactive documentation for both APIs:
-
----
-
-<div id="igsp-tabs">
-  <style>
-    #igsp-tabs { margin-top: 2em; }
-    #tab-nav {
-      display: flex; gap: 1.5em;
-      background: #111827; padding: 1rem 1.5rem;
-      border-radius: .5rem .5rem 0 0;
-    }
-    #tab-nav a {
-      color: #f3f4f6; text-decoration: none; font-weight: 600;
-    }
-    #tab-nav a.active { color: #60a5fa; }
-    #redoc-container {
-      height: 80vh;
-      border: 1px solid #e5e7eb;
-      border-top: none;
-      border-radius: 0 0 .5rem .5rem;
-      background: #fff;
-    }
-  </style>
-
-  <div id="tab-nav">
-    <a href="#operators" id="tab-operators">Operators API</a>
-    <a href="#providers" id="tab-providers">Providers API</a>
-  </div>
-
-  <div id="redoc-container"></div>
-
-  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-  <script>
-    const params = window.location.hash.replace('#','') || 'operators';
-    const specUrl = params === 'providers'
-      ? 'spec/igsp-providers.yaml'
-      : 'spec/igsp-operators.yaml';
-    document.getElementById(`tab-${params}`).classList.add('active');
-    Redoc.init(specUrl, {
-      scrollYOffset: 60,
-      theme: { colors: { primary: { main: '#2563eb' } } }
-    }, document.getElementById('redoc-container'));
-    document.querySelectorAll('#tab-nav a').forEach(a => a.addEventListener('click', e => {
-      e.preventDefault();
-      location.hash = a.id.replace('tab-','');
-      location.reload();
-    }));
-  </script>
-</div>
+| API | Description | Link |
+|-----|--------------|------|
+| Operators API | Endpoints for casino platforms | [View Operators API →](operators.html) |
+| Providers API | Endpoints for game providers | [View Providers API →](providers.html) |
 
 ---
 
