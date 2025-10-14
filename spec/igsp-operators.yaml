@@ -1,0 +1,233 @@
+openapi: 3.1.0
+info:
+  title: iGSP Operator Hooks API
+  version: 1.0.0
+  description: |
+    iGaming Standard Protocol — Operator integration endpoints, including game provider webhooks.
+servers:
+  - url: https://api.igsp.dev/operators/v1
+paths:
+  /operators/game-provider/hooks:
+    post:
+      summary: Handle game provider operator webhook
+      description: |
+        Accepts webhook callbacks from the game provider and performs balance queries, bet placement,
+        win settlements, refunds, or rollbacks depending on the supplied `action`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/BalanceRequest'
+                - $ref: '#/components/schemas/BetRequest'
+                - $ref: '#/components/schemas/WinRequest'
+                - $ref: '#/components/schemas/RefundRequest'
+              discriminator:
+                propertyName: action
+                mapping:
+                  balance: '#/components/schemas/BalanceRequest'
+                  bet: '#/components/schemas/BetRequest'
+                  win: '#/components/schemas/WinRequest'
+                  refund: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: Hook processed successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BalanceResponse'
+                  - $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Validation failed or action not supported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected operator processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    BalanceRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - currency
+      properties:
+        action:
+          type: string
+          enum:
+            - balance
+        player_id:
+          type: string
+          description: Internal user identifier within the operator platform.
+        currency:
+          type: string
+          description: Three-letter ISO currency code used by the game session.
+        session_id:
+          type: string
+          description: Optional game session identifier; if omitted the latest active session is used.
+    BetRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - amount
+        - currency
+        - game_id
+        - transaction_id
+        - session_id
+        - type
+      properties:
+        action:
+          type: string
+          enum:
+            - bet
+        player_id:
+          type: string
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Bet amount in the operator currency.
+        currency:
+          type: string
+        game_id:
+          type: string
+          description: Unique game identifier provided by the game provider.
+        transaction_id:
+          type: string
+          description: Idempotent identifier supplied by the game provider for the bet.
+        session_id:
+          type: string
+          description: Active game session identifier established by the operator.
+        type:
+          type: string
+          description: Game provider transaction type identifier.
+        round_id:
+          type: string
+          description: Optional game round identifier.
+        finished:
+          type: boolean
+          description: Indicates whether the bet concludes the round.
+    WinRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - amount
+        - currency
+        - game_id
+        - transaction_id
+        - session_id
+        - type
+      properties:
+        action:
+          type: string
+          enum:
+            - win
+        player_id:
+          type: string
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Win amount to be credited to the player wallet.
+        currency:
+          type: string
+        game_id:
+          type: string
+        transaction_id:
+          type: string
+          description: Idempotent identifier supplied by the game provider for the win.
+        session_id:
+          type: string
+        type:
+          type: string
+          description: Game provider transaction type identifier.
+        finished:
+          type: boolean
+    RefundRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - amount
+        - currency
+        - game_id
+        - transaction_id
+        - session_id
+        - type
+        - bet_transaction_id
+      properties:
+        action:
+          type: string
+          enum:
+            - refund
+        player_id:
+          type: string
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Amount to return to the player wallet.
+        currency:
+          type: string
+        game_id:
+          type: string
+        transaction_id:
+          type: string
+          description: Idempotent identifier supplied by the game provider for the refund operation.
+        session_id:
+          type: string
+        type:
+          type: string
+          description: Game provider transaction type identifier.
+        bet_transaction_id:
+          type: string
+          description: Original bet transaction identifier to refund.
+        finished:
+          type: boolean
+    BalanceResponse:
+      type: object
+      required:
+        - balance
+      properties:
+        balance:
+          type: number
+          format: float
+          description: Player balance converted to the game currency.
+    TransactionResponse:
+      type: object
+      required:
+        - balance
+        - transaction_id
+      properties:
+        balance:
+          type: number
+          format: float
+          description: Latest player balance converted to the game currency.
+        transaction_id:
+          type: string
+          description: Internal transaction identifier generated by the operator.
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Machine-friendly error code.
+        message:
+          type: string
+          description: Human-readable explanation of the error.
+        status:
+          type: integer
+          description: HTTP status code returned by the operator.

@@ -26,7 +26,7 @@ It introduces a unified set of endpoints covering games, sessions, providers, cu
 
 | Path | Description |
 |------|--------------|
-| `/spec/igsp-reference.yaml` | OpenAPI 3.1 definition for the reference endpoints |
+| `/spec/igsp-providers.yaml` | OpenAPI 3.1 definition for the reference endpoints |
 | `/modules.md` | Overview of functional modules |
 | `/changelog.md` | Version history and backward-compatibility notes |
 
@@ -38,7 +38,7 @@ You can browse the live documentation here:
 ➡️ **[https://ivial98.github.io/igsp/](https://ivial98.github.io/igsp/)**
 
 Or access the OpenAPI spec directly:  
-➡️ [`/spec/igsp-reference.yaml`](spec/igsp-reference.yaml)
+➡️ [`/spec/igsp-providers.yaml`](spec/igsp-providers.yaml)
 
 ---
 

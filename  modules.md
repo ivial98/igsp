@@ -18,4 +18,4 @@ The iGSP standard defines several API groups:
 
 Each module is designed to be **independent and discoverable** through `/v1/` endpoints.
 
-See the [OpenAPI spec](spec/igsp-reference.yaml) for full details.
+See the [OpenAPI spec](spec/igsp-providers.yaml) for full details.
