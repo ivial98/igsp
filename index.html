@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>iGSP API Documentation</title>
+  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #f8f9fb;
+    }
+    nav {
+      background: #111827;
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 2rem;
+    }
+    nav a {
+      color: #f3f4f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav a.active {
+      color: #60a5fa;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: calc(100vh - 60px);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="?spec=operators" id="tab-operators">Operators API</a>
+    <a href="?spec=providers" id="tab-providers">Providers API</a>
+  </nav>
+  <div id="redoc-container"></div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const spec = params.get("spec") || "operators";
+    const specUrl = spec === "providers"
+      ? "spec/igsp-providers.yaml"
+      : "spec/igsp-operators.yaml";
+
+    document.getElementById(`tab-${spec}`).classList.add("active");
+    Redoc.init(specUrl, {scrollYOffset: 50, theme: {colors: {primary: {main: "#2563eb"}}}}, document.getElementById("redoc-container"));
+  </script>
+</body>
+</html>
