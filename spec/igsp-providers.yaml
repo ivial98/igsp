@@ -10,9 +10,96 @@ paths:
   /games:
     get:
       summary: Games
+      description: |
+        Retrieving games list.
+        
       responses:
         '200':
           description: List of games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Game ID that will be used in session creation
+                          example: "abcd12345"
+                        name:
+                          type: string
+                          description: Game name
+                          example: "Book of Ra"
+                        image:
+                          type: string
+                          description: Game image url
+                          example: "https://static.game-aggregator.com/games/4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
+                        type:
+                          type: string
+                          description: Game type
+                          example: "Slots"
+                        provider:
+                          type: string
+                          description: Game provider name
+                          example: "abcd12345"
+                        images:
+                          type: array
+                          description: game images objects, including high-quality if available (available with expand=images)
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
+                              file:
+                                type: string
+                                example: "games/4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
+                              url:
+                                type: string
+                                example: "https://static.game-aggregator.com/games/4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
+                              type:
+                                type: string
+                                example: "regular"
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: "https://game-aggregator.com/endpoint?page=1"
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: "https://game-aggregator.com/endpoint?page=2"
+                      last:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: "https://game-aggregator.com/endpoint?page=50"
+                  _meta:
+                    type: object
+                    properties:
+                      totalCount:
+                        type: integer
+                        example: 1000
+                      pageCount:
+                        type: integer
+                        example: 50
+                      currentPage:
+                        type: integer
+                        example: 1
+                      perPage:
+                        type: integer
+                        example: 20
   /sessions:
     post:
       summary: Create a new gaming session
