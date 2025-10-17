@@ -9,7 +9,7 @@ servers:
 paths:
   /games:
     get:
-      summary: List available games
+      summary: Games
       responses:
         '200':
           description: List of games
@@ -21,25 +21,7 @@ paths:
           description: Session created
   /providers:
     get:
-      summary: List game providers
+      summary: Providers
       responses:
         '200':
           description: List of providers
-  /types:
-    get:
-      summary: List game types
-      responses:
-        '200':
-          description: List of types
-  /currencies:
-    get:
-      summary: List supported currencies
-      responses:
-        '200':
-          description: List of currencies
-  /countries:
-    get:
-      summary: List supported countries
-      responses:
-        '200':
-          description: List of countries
