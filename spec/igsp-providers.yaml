@@ -21,85 +21,228 @@ paths:
               schema:
                 type: object
                 properties:
-                  items:
+                  data:
                     type: array
                     items:
                       type: object
                       properties:
                         id:
-                          type: string
+                          type: integer
                           description: Game ID that will be used in session creation
-                          example: "abcd12345"
+                          example: 13339
+                        game_provider_id:
+                          type: integer
+                          description: Game provider ID
+                          example: 1
+                        integration_id:
+                          type: integer
+                          description: Integration ID
+                          example: 2
+                        slug:
+                          type: string
+                          description: Game slug
+                          example: "jaws-munch"
                         name:
                           type: string
                           description: Game name
-                          example: "Book of Ra"
-                        image:
+                          example: "Jaws Munch"
+                        rtp:
                           type: string
-                          description: Game image url
-                          example: "https://static.game-aggregator.com/games/4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
-                        type:
+                          description: Return to Player percentage
+                          example: "0.00"
+                        bonus_rollover_coefficient:
                           type: string
-                          description: Game type
-                          example: "Slots"
+                          description: Bonus rollover coefficient
+                          example: "0.00"
+                        status:
+                          type: string
+                          description: Game status
+                          example: "active"
+                        weight:
+                          type: integer
+                          description: Game weight for sorting
+                          example: 0
+                        init_number:
+                          type: integer
+                          description: Initialization number
+                          example: 0
+                        created_at:
+                          type: string
+                          format: date-time
+                          description: Creation timestamp
+                          example: "2025-10-02T08:18:25.000000Z"
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: Last update timestamp
+                          example: "2025-10-02T08:18:25.000000Z"
+                        deleted_at:
+                          type: string
+                          format: date-time
+                          nullable: true
+                          description: Deletion timestamp
+                          example: null
                         provider:
-                          type: string
-                          description: Game provider name
-                          example: "abcd12345"
-                        images:
+                          type: object
+                          description: Game provider information
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            slug:
+                              type: string
+                              example: "insomnia"
+                            name:
+                              type: string
+                              example: "Insomnia"
+                            image_url:
+                              type: string
+                              nullable: true
+                              example: null
+                            weight:
+                              type: integer
+                              example: 0
+                            status:
+                              type: string
+                              example: "active"
+                            created_at:
+                              type: string
+                              format: date-time
+                              example: "2025-09-30T11:18:26.000000Z"
+                            updated_at:
+                              type: string
+                              format: date-time
+                              example: "2025-09-30T11:18:26.000000Z"
+                        integration:
+                          type: object
+                          description: Integration information
+                          properties:
+                            id:
+                              type: integer
+                              example: 2
+                            key:
+                              type: string
+                              nullable: true
+                              example: null
+                            alias:
+                              type: string
+                              example: "acava"
+                            name:
+                              type: string
+                              example: "Acava"
+                            type:
+                              type: string
+                              example: "slots"
+                            status:
+                              type: string
+                              example: "active"
+                            created_at:
+                              type: string
+                              format: date-time
+                              example: "2025-10-02T08:16:02.000000Z"
+                            updated_at:
+                              type: string
+                              format: date-time
+                              example: "2025-10-02T08:16:02.000000Z"
+                        categories:
                           type: array
-                          description: game images objects, including high-quality if available (available with expand=images)
+                          description: Game categories
                           items:
                             type: object
                             properties:
+                              id:
+                                type: integer
+                                example: 1
+                              slug:
+                                type: string
+                                example: "slots"
                               name:
                                 type: string
-                                example: "4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
-                              file:
+                                example: "Slots"
+                              image_url:
                                 type: string
-                                example: "games/4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
-                              url:
+                                nullable: true
+                                example: null
+                              weight:
+                                type: integer
+                                example: 0
+                              status:
                                 type: string
-                                example: "https://static.game-aggregator.com/games/4694605316aa1ca969fe89227aabe51c1e8b091b.jpg"
-                              type:
+                                example: "active"
+                              created_at:
                                 type: string
-                                example: "regular"
-                  _links:
+                                format: date-time
+                                example: "2025-09-30T11:16:33.000000Z"
+                              updated_at:
+                                type: string
+                                format: date-time
+                                example: "2025-09-30T11:16:33.000000Z"
+                              games:
+                                type: string
+                                nullable: true
+                                example: null
+                  links:
                     type: object
+                    description: Pagination links
                     properties:
-                      self:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://game-aggregator.com/endpoint?page=1"
-                      next:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://game-aggregator.com/endpoint?page=2"
+                      first:
+                        type: string
+                        example: "http://api.dev.betkudos.com/api/games?page=1"
                       last:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://game-aggregator.com/endpoint?page=50"
-                  _meta:
+                        type: string
+                        example: "http://api.dev.betkudos.com/api/games?page=667"
+                      prev:
+                        type: string
+                        nullable: true
+                        example: null
+                      next:
+                        type: string
+                        example: "http://api.dev.betkudos.com/api/games?page=2"
+                  meta:
                     type: object
+                    description: Pagination metadata
                     properties:
-                      totalCount:
-                        type: integer
-                        example: 1000
-                      pageCount:
-                        type: integer
-                        example: 50
-                      currentPage:
+                      current_page:
                         type: integer
                         example: 1
-                      perPage:
+                      from:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 667
+                      links:
+                        type: array
+                        description: Pagination link objects
+                        items:
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                              nullable: true
+                              example: null
+                            label:
+                              type: string
+                              example: "&laquo; Previous"
+                            page:
+                              type: integer
+                              nullable: true
+                              example: null
+                            active:
+                              type: boolean
+                              example: false
+                      path:
+                        type: string
+                        example: "http://api.dev.betkudos.com/api/games"
+                      per_page:
                         type: integer
                         example: 20
+                      to:
+                        type: integer
+                        example: 20
+                      total:
+                        type: integer
+                        example: 13339
   /sessions:
     post:
       summary: Create a new gaming session
