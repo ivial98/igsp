@@ -38,8 +38,8 @@ It introduces a unified set of endpoints covering games, sessions, providers, cu
 
 | API | Description | Link |
 |-----|--------------|------|
-| Operators API | Endpoints for casino platforms | [View Operators API →](operators.html) |
-| Providers API | Endpoints for game providers | [View Providers API →](providers.html) |
+| Operators API | Endpoints for casino platforms | [View Operators API →]({{ "/operators.html" | relative_url }}) |
+| Providers API | Endpoints for game providers | [View Providers API →]({{ "/providers.html" | relative_url }}) |
 
 ---
 
