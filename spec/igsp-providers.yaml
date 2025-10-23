@@ -252,6 +252,156 @@ paths:
   /providers:
     get:
       summary: Providers
+      description: List all available game providers
       responses:
         '200':
           description: List of providers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Provider'
+                  links:
+                    type: object
+                    description: Pagination links
+                    properties:
+                      first:
+                        type: string
+                        example: "http://api.igsp.dev/v1/providers?page=1"
+                      last:
+                        type: string
+                        example: "http://api.igsp.dev/v1/providers?page=10"
+                      prev:
+                        type: string
+                        nullable: true
+                        example: null
+                      next:
+                        type: string
+                        example: "http://api.igsp.dev/v1/providers?page=2"
+                  meta:
+                    type: object
+                    description: Pagination metadata
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      from:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 10
+                      per_page:
+                        type: integer
+                        example: 20
+                      to:
+                        type: integer
+                        example: 20
+                      total:
+                        type: integer
+                        example: 200
+  /providers/{id}:
+    get:
+      summary: Get Provider by ID
+      description: Retrieve a specific provider by its unique identifier
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Provider UUID
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: Provider details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '404':
+          description: Provider not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Provider not found"
+                  message:
+                    type: string
+                    example: "The requested provider does not exist"
+components:
+  schemas:
+    Provider:
+      type: object
+      required:
+        - id
+        - name
+        - currencies
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the provider
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          description: Provider name
+          example: "NetEnt"
+        currencies:
+          type: array
+          description: List of supported currencies
+          items:
+            type: string
+          example: ["USD", "EUR", "GBP", "CAD"]
+        restricted_countries:
+          type: array
+          description: List of restricted countries where this provider is not available
+          items:
+            type: string
+          example: ["US", "CN", "RU"]
+        images:
+          type: array
+          description: List of provider images
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Image filename
+                example: "netent-logo.png"
+              url:
+                type: string
+                description: Full image URL
+                example: "https://static.igsp.dev/providers/netent-logo.png"
+              type:
+                type: string
+                description: Image type
+                example: "logo"
+          example:
+            - name: "netent-logo.png"
+              url: "https://static.igsp.dev/providers/netent-logo.png"
+              type: "logo"
+        min_age:
+          type: integer
+          description: Minimum age required to access this provider's games
+          example: 18
+        min_kyc_level:
+          type: string
+          description: Minimum KYC (Know Your Customer) level required to access this provider's games
+          enum:
+            - "anonymous"
+            - "registered"
+            - "basic"
+            - "verified"
+            - "enhanced"
+            - "source_of_funds"
+            - "restricted"
+          example: "basic"

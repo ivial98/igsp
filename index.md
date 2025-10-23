@@ -9,7 +9,7 @@ nav_order: 1
 
 The **iGSP** defines an open, vendor-neutral API for standardized communication between iGaming platforms and game providers.
 
-It introduces a unified set of endpoints covering games, sessions, providers, currencies, and countries — ensuring interoperability, compliance, and transparency across integrations.
+It introduces a unified set of endpoints covering games, sessions, and providers — ensuring interoperability, compliance, and transparency across integrations.
 
 ---
 
