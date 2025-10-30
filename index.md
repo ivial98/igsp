@@ -7,16 +7,19 @@ nav_order: 1
 
 > **A universal open protocol connecting game providers and casino platforms.**
 
-The **iGSP** defines an open, vendor-neutral API for standardized communication between iGaming platforms and game providers.
+In the iGaming industry, **game providers** are interested in being available across as many casino platforms as possible, while **casino platforms** aim to offer operators a wide variety of games to build a unique mix that matches their audience.  
 
-It introduces a unified set of endpoints covering games, sessions, and providers — ensuring interoperability, compliance, and transparency across integrations.
+However, differences in API structures and approaches between platforms and providers make each integration unique and often complex. One side is usually forced to develop a custom integration layer to handle authentication, sessions, bets, and reporting.  
+
+Building and testing these layers consumes time and developer resources — increasing the cost and duration of integrations.
+
+The **iGSP standard** aims to solve this by defining a common API structure for both **game providers** and **casino platforms**. By implementing this protocol, both sides expand their partnership potential — and the technical integration process is reduced to a simple exchange of API keys.
 
 ---
 
 ## ✨ Key Principles
 
 - **Open & neutral** — free to implement, modify, and extend.
-- **Modular** — core specification with optional feature extensions.
 - **Secure & auditable** — HMAC signatures, idempotency, and trace IDs.
 - **Regulation-ready** — supports jurisdictional and KYC constraints.
 
@@ -26,10 +29,8 @@ It introduces a unified set of endpoints covering games, sessions, and providers
 
 | Path | Description |
 |------|--------------|
-| `/spec/igsp-reference.yaml` | OpenAPI 3.1 definition for the reference endpoints |
 | `/spec/igsp-operators.yaml` | API for casino operators |
 | `/spec/igsp-providers.yaml` | API for game providers |
-| `/modules.md` | Overview of functional modules |
 | `/changelog.md` | Version history and backward-compatibility notes |
 
 ---
