@@ -5,14 +5,29 @@ info:
   description: |
     iGaming Standard Protocol — Reference API for providers.
 servers:
-  - url: https://api.igsp.dev/v1
+  - url: https://api.provider.com/igsp/v1
 paths:
   /games:
     get:
       summary: Games
       description: |
         Retrieving games list.
-        
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: Cursor token returned in the previous response.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of records to return in this page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
       responses:
         '200':
           description: List of games
@@ -27,21 +42,13 @@ paths:
                       type: object
                       properties:
                         id:
-                          type: integer
+                          type: uuid
                           description: Game ID that will be used in session creation
-                          example: 13339
-                        game_provider_id:
-                          type: integer
-                          description: Game provider ID
-                          example: 1
-                        integration_id:
-                          type: integer
-                          description: Integration ID
-                          example: 2
-                        slug:
-                          type: string
-                          description: Game slug
-                          example: "jaws-munch"
+                          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        provider_id:
+                          type: uuid
+                          description: Provider ID
+                          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                         name:
                           type: string
                           description: Game name
@@ -50,199 +57,54 @@ paths:
                           type: string
                           description: Return to Player percentage
                           example: "0.00"
-                        bonus_rollover_coefficient:
-                          type: string
-                          description: Bonus rollover coefficient
-                          example: "0.00"
                         status:
                           type: string
                           description: Game status
                           example: "active"
-                        weight:
-                          type: integer
-                          description: Game weight for sorting
-                          example: 0
-                        init_number:
-                          type: integer
-                          description: Initialization number
-                          example: 0
-                        created_at:
-                          type: string
-                          format: date-time
-                          description: Creation timestamp
-                          example: "2025-10-02T08:18:25.000000Z"
                         updated_at:
                           type: string
                           format: date-time
                           description: Last update timestamp
                           example: "2025-10-02T08:18:25.000000Z"
-                        deleted_at:
-                          type: string
-                          format: date-time
-                          nullable: true
-                          description: Deletion timestamp
-                          example: null
-                        provider:
-                          type: object
-                          description: Game provider information
-                          properties:
-                            id:
-                              type: integer
-                              example: 1
-                            slug:
-                              type: string
-                              example: "insomnia"
-                            name:
-                              type: string
-                              example: "Insomnia"
-                            image_url:
-                              type: string
-                              nullable: true
-                              example: null
-                            weight:
-                              type: integer
-                              example: 0
-                            status:
-                              type: string
-                              example: "active"
-                            created_at:
-                              type: string
-                              format: date-time
-                              example: "2025-09-30T11:18:26.000000Z"
-                            updated_at:
-                              type: string
-                              format: date-time
-                              example: "2025-09-30T11:18:26.000000Z"
-                        integration:
-                          type: object
-                          description: Integration information
-                          properties:
-                            id:
-                              type: integer
-                              example: 2
-                            key:
-                              type: string
-                              nullable: true
-                              example: null
-                            alias:
-                              type: string
-                              example: "acava"
-                            name:
-                              type: string
-                              example: "Acava"
-                            type:
-                              type: string
-                              example: "slots"
-                            status:
-                              type: string
-                              example: "active"
-                            created_at:
-                              type: string
-                              format: date-time
-                              example: "2025-10-02T08:16:02.000000Z"
-                            updated_at:
-                              type: string
-                              format: date-time
-                              example: "2025-10-02T08:16:02.000000Z"
                         categories:
                           type: array
                           description: Game categories
                           items:
                             type: object
                             properties:
-                              id:
-                                type: integer
-                                example: 1
-                              slug:
-                                type: string
-                                example: "slots"
                               name:
                                 type: string
                                 example: "Slots"
-                              image_url:
-                                type: string
-                                nullable: true
-                                example: null
-                              weight:
-                                type: integer
-                                example: 0
-                              status:
-                                type: string
-                                example: "active"
-                              created_at:
-                                type: string
-                                format: date-time
-                                example: "2025-09-30T11:16:33.000000Z"
-                              updated_at:
-                                type: string
-                                format: date-time
-                                example: "2025-09-30T11:16:33.000000Z"
-                              games:
-                                type: string
-                                nullable: true
-                                example: null
-                  links:
+                  cursor:
                     type: object
-                    description: Pagination links
+                    description: Cursor pagination details
                     properties:
-                      first:
-                        type: string
-                        example: "http://api.dev.betkudos.com/api/games?page=1"
-                      last:
-                        type: string
-                        example: "http://api.dev.betkudos.com/api/games?page=667"
-                      prev:
-                        type: string
-                        nullable: true
-                        example: null
                       next:
                         type: string
-                        example: "http://api.dev.betkudos.com/api/games?page=2"
+                        nullable: true
+                        description: Use this token to fetch the next page.
+                        example: "eyJvZmZzZXQiOiAiMTMzMzkifQ=="
+                      previous:
+                        type: string
+                        nullable: true
+                        description: Use this token to fetch the previous page.
+                        example: null
                   meta:
                     type: object
                     description: Pagination metadata
                     properties:
-                      current_page:
+                      limit:
                         type: integer
-                        example: 1
-                      from:
+                        description: Number of records requested per page.
+                        example: 50
+                      returned:
                         type: integer
-                        example: 1
-                      last_page:
-                        type: integer
-                        example: 667
-                      links:
-                        type: array
-                        description: Pagination link objects
-                        items:
-                          type: object
-                          properties:
-                            url:
-                              type: string
-                              nullable: true
-                              example: null
-                            label:
-                              type: string
-                              example: "&laquo; Previous"
-                            page:
-                              type: integer
-                              nullable: true
-                              example: null
-                            active:
-                              type: boolean
-                              example: false
-                      path:
-                        type: string
-                        example: "http://api.dev.betkudos.com/api/games"
-                      per_page:
-                        type: integer
-                        example: 20
-                      to:
-                        type: integer
-                        example: 20
-                      total:
-                        type: integer
-                        example: 13339
+                        description: Number of records returned in this response.
+                        example: 50
+                      has_more:
+                        type: boolean
+                        description: Indicates whether another page can be fetched with the `next` cursor.
+                        example: true
   /sessions:
     post:
       summary: Create a new gaming session
@@ -253,6 +115,22 @@ paths:
     get:
       summary: Providers
       description: List all available game providers
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: Cursor token returned in the previous response.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of records to return in this page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
       responses:
         '200':
           description: List of providers
@@ -265,45 +143,36 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Provider'
-                  links:
+                  cursor:
                     type: object
-                    description: Pagination links
+                    description: Cursor pagination details
                     properties:
-                      first:
-                        type: string
-                        example: "http://api.igsp.dev/v1/providers?page=1"
-                      last:
-                        type: string
-                        example: "http://api.igsp.dev/v1/providers?page=10"
-                      prev:
-                        type: string
-                        nullable: true
-                        example: null
                       next:
                         type: string
-                        example: "http://api.igsp.dev/v1/providers?page=2"
+                        nullable: true
+                        description: Use this token to fetch the next page.
+                        example: "eyJvZmZzZXQiOiAiNDMifQ=="
+                      previous:
+                        type: string
+                        nullable: true
+                        description: Use this token to fetch the previous page.
+                        example: null
                   meta:
                     type: object
                     description: Pagination metadata
                     properties:
-                      current_page:
+                      limit:
                         type: integer
-                        example: 1
-                      from:
+                        description: Number of records requested per page.
+                        example: 50
+                      returned:
                         type: integer
-                        example: 1
-                      last_page:
-                        type: integer
-                        example: 10
-                      per_page:
-                        type: integer
+                        description: Number of records returned in this response.
                         example: 20
-                      to:
-                        type: integer
-                        example: 20
-                      total:
-                        type: integer
-                        example: 200
+                      has_more:
+                        type: boolean
+                        description: Indicates whether another page can be fetched with the `next` cursor.
+                        example: true
   /providers/{id}:
     get:
       summary: Get Provider by ID
