@@ -28,6 +28,13 @@ paths:
             minimum: 1
             maximum: 200
             default: 50
+        - name: updated_after
+          in: query
+          required: false
+          description: Return only games updated strictly after this UTC timestamp.
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: List of games
@@ -42,11 +49,13 @@ paths:
                       type: object
                       properties:
                         id:
-                          type: uuid
+                          type: string
+                          format: uuid
                           description: Game ID that will be used in session creation
                           example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                         provider_id:
-                          type: uuid
+                          type: string
+                          format: uuid
                           description: Provider ID
                           example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                         name:
@@ -54,11 +63,17 @@ paths:
                           description: Game name
                           example: "Jaws Munch"
                         rtp:
-                          type: string
+                          type: number
+                          format: float
                           description: Return to Player percentage
-                          example: "0.00"
+                          example: 0.95
                         status:
                           type: string
+                          enum:
+                            - active
+                            - inactive
+                            - pending
+                            - deprecated
                           description: Game status
                           example: "active"
                         updated_at:
@@ -70,11 +85,11 @@ paths:
                           type: array
                           description: Game categories
                           items:
-                            type: object
-                            properties:
-                              name:
-                                type: string
-                                example: "Slots"
+                            type: string
+                          example:
+                            - "slots"
+                            - "table games"
+                            - "live games"
                   cursor:
                     type: object
                     description: Cursor pagination details
@@ -131,6 +146,13 @@ paths:
             minimum: 1
             maximum: 200
             default: 50
+        - name: updated_after
+          in: query
+          required: false
+          description: Return only providers updated strictly after this UTC timestamp.
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: List of providers
@@ -173,39 +195,6 @@ paths:
                         type: boolean
                         description: Indicates whether another page can be fetched with the `next` cursor.
                         example: true
-  /providers/{id}:
-    get:
-      summary: Get Provider by ID
-      description: Retrieve a specific provider by its unique identifier
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Provider UUID
-          schema:
-            type: string
-            format: uuid
-            example: "550e8400-e29b-41d4-a716-446655440000"
-      responses:
-        '200':
-          description: Provider details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Provider'
-        '404':
-          description: Provider not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Provider not found"
-                  message:
-                    type: string
-                    example: "The requested provider does not exist"
 components:
   schemas:
     Provider:
@@ -229,13 +218,20 @@ components:
           description: List of supported currencies
           items:
             type: string
-          example: ["USD", "EUR", "GBP", "CAD"]
+          example:
+            - "USD"
+            - "EUR"
+            - "GBP"
+            - "CAD"
         restricted_countries:
           type: array
           description: List of restricted countries where this provider is not available
           items:
             type: string
-          example: ["US", "CN", "RU"]
+          example:
+            - "US"
+            - "CN"
+            - "RU"
         images:
           type: array
           description: List of provider images
