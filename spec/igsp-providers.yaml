@@ -1,0 +1,342 @@
+openapi: 3.1.0
+info:
+  title: iGSP Reference API
+  version: 1.0.0
+  description: |
+    iGaming Standard Protocol — Reference API for providers.
+servers:
+  - url: https://api.provider.com/igsp/v1
+paths:
+  /games:
+    get:
+      summary: Games
+      description: |
+        Retrieving games list.
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: Cursor token returned in the previous response.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of records to return in this page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: updated_after
+          in: query
+          required: false
+          description: Return only games updated strictly after this UTC timestamp.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Game ID that will be used in session creation
+                          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        provider_id:
+                          type: string
+                          format: uuid
+                          description: Provider ID
+                          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        name:
+                          type: string
+                          description: Game name
+                          example: "Jaws Munch"
+                        rtp:
+                          type: number
+                          format: float
+                          description: Return to Player percentage
+                          example: 0.95
+                        status:
+                          type: string
+                          enum:
+                            - active
+                            - inactive
+                            - pending
+                            - deprecated
+                          description: Game status
+                          example: "active"
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: Last update timestamp
+                          example: "2025-10-02T08:18:25.000000Z"
+                        categories:
+                          type: array
+                          description: Game categories
+                          items:
+                            type: string
+                          example:
+                            - "slots"
+                            - "table games"
+                            - "live games"
+                  cursor:
+                    type: object
+                    description: Cursor pagination details
+                    properties:
+                      next:
+                        type: string
+                        nullable: true
+                        description: Use this token to fetch the next page.
+                        example: "eyJvZmZzZXQiOiAiMTMzMzkifQ=="
+                      previous:
+                        type: string
+                        nullable: true
+                        description: Use this token to fetch the previous page.
+                        example: null
+                  meta:
+                    type: object
+                    description: Pagination metadata
+                    properties:
+                      limit:
+                        type: integer
+                        description: Number of records requested per page.
+                        example: 50
+                      returned:
+                        type: integer
+                        description: Number of records returned in this response.
+                        example: 50
+                      has_more:
+                        type: boolean
+                        description: Indicates whether another page can be fetched with the `next` cursor.
+                        example: true
+  /sessions:
+    post:
+      summary: Create a new gaming session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - game_id
+                - player_id
+                - player_name
+                - currency
+                - session_id
+                - balance
+              properties:
+                game_id:
+                  type: uuid
+                  description: Game I provided in the `/games` response.
+                  example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                player_id:
+                  type: string
+                  description: Unique player identifier on the platform side.
+                  example: "player-912"
+                player_name:
+                  type: string
+                  description: Player nickname that may be displayed within the game.
+                  example: "LuckyFox"
+                currency:
+                  type: string
+                  description: ISO-4217 currency code to be used for the session.
+                  example: "EUR"
+                session_id:
+                  type: string
+                  description: Usually a unique session identifier on the platform side.
+                  example: "sess-20250101-0001"
+                device:
+                  type: string
+                  description: Type of device used to launch the game.
+                  enum:
+                    - desktop
+                    - mobile
+                  default: mobile
+                  example: "desktop"
+                return_url:
+                  type: string
+                  description: URL to redirect the player to after the game ends.
+                  format: uri
+                  example: "https://casino.example.com/lobby"
+                language:
+                  type: string
+                  description: Player language (ISO-639-1 code recommended).
+                  example: "en"
+                balance:
+                  type: number
+                  format: float
+                  description: Player balance in the currency specified in the request.
+                  example: 100.00
+                is_demo:
+                  type: boolean
+                  description: Indicates whether the session is a demo session.
+                  example: false
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: Launch URL that should be opened by the platform to start the game.
+                    example: "https://games.provider.com/session/launch/abc123"
+  /providers:
+    get:
+      summary: Providers
+      description: List all available game providers
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: Cursor token returned in the previous response.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of records to return in this page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: updated_after
+          in: query
+          required: false
+          description: Return only providers updated strictly after this UTC timestamp.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of providers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Provider'
+                  cursor:
+                    type: object
+                    description: Cursor pagination details
+                    properties:
+                      next:
+                        type: string
+                        nullable: true
+                        description: Use this token to fetch the next page.
+                        example: "eyJvZmZzZXQiOiAiNDMifQ=="
+                      previous:
+                        type: string
+                        nullable: true
+                        description: Use this token to fetch the previous page.
+                        example: null
+                  meta:
+                    type: object
+                    description: Pagination metadata
+                    properties:
+                      limit:
+                        type: integer
+                        description: Number of records requested per page.
+                        example: 50
+                      returned:
+                        type: integer
+                        description: Number of records returned in this response.
+                        example: 20
+                      has_more:
+                        type: boolean
+                        description: Indicates whether another page can be fetched with the `next` cursor.
+                        example: true
+components:
+  schemas:
+    Provider:
+      type: object
+      required:
+        - id
+        - name
+        - currencies
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the provider
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          description: Provider name
+          example: "NetEnt"
+        currencies:
+          type: array
+          description: List of supported currencies
+          items:
+            type: string
+          example:
+            - "USD"
+            - "EUR"
+            - "GBP"
+            - "CAD"
+        restricted_countries:
+          type: array
+          description: List of restricted countries where this provider is not available
+          items:
+            type: string
+          example:
+            - "US"
+            - "CN"
+            - "RU"
+        images:
+          type: array
+          description: List of provider images
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Image filename
+                example: "netent-logo.png"
+              url:
+                type: string
+                description: Full image URL
+                example: "https://static.igsp.dev/providers/netent-logo.png"
+              type:
+                type: string
+                description: Image type
+                example: "logo"
+          example:
+            - name: "netent-logo.png"
+              url: "https://static.igsp.dev/providers/netent-logo.png"
+              type: "logo"
+        min_age:
+          type: integer
+          description: Minimum age required to access this provider's games
+          example: 18
+        min_kyc_level:
+          type: string
+          description: Minimum KYC (Know Your Customer) level required to access this provider's games
+          enum:
+            - "anonymous"
+            - "registered"
+            - "basic"
+            - "verified"
+            - "enhanced"
+            - "source_of_funds"
+            - "restricted"
+          example: "basic"

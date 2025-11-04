@@ -1,0 +1,252 @@
+openapi: 3.1.0
+info:
+  title: iGSP Platform Hooks API
+  version: 1.0.0
+  description: |
+    iGaming Standard Protocol — Platform integration endpoints, including game provider webhooks.
+servers:
+  - url: https://api.igsp.dev/platforms/v1
+paths:
+  /platforms/game-provider/hooks:
+    post:
+      summary: Handle game provider platform webhook callback
+      description: |
+        Accepts webhook callbacks from the game provider and performs balance queries, bet placement,
+        win settlements, refunds, or rollbacks depending on the supplied `action`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/BalanceRequest'
+                - $ref: '#/components/schemas/BetRequest'
+                - $ref: '#/components/schemas/WinRequest'
+                - $ref: '#/components/schemas/RefundRequest'
+              discriminator:
+                propertyName: action
+                mapping:
+                  balance: '#/components/schemas/BalanceRequest'
+                  bet: '#/components/schemas/BetRequest'
+                  win: '#/components/schemas/WinRequest'
+                  refund: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: Hook processed successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BalanceResponse'
+                  - $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Validation failed or action not supported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected platform processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    BalanceRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - currency
+      properties:
+        action:
+          type: string
+          enum:
+            - balance
+        player_id:
+          type: string
+          description: Internal user identifier within the platform.
+        currency:
+          type: string
+          description: Three-letter ISO currency code used by the game session.
+        session_id:
+          type: string
+          description: Optional game session identifier; if omitted the latest active session is used.
+    BetRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - amount
+        - currency
+        - game_id
+        - transaction_id
+        - session_id
+        - type
+      properties:
+        action:
+          type: string
+          enum:
+            - bet
+        player_id:
+          type: string
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Bet amount in the platform currency.
+        currency:
+          type: string
+        game_id:
+          type: string
+          description: Unique game identifier provided by the game provider.
+        transaction_id:
+          type: string
+          description: Idempotent identifier supplied by the game provider for the bet.
+        session_id:
+          type: string
+          description: Active game session identifier established by the platform.
+        type:
+          type: string
+          description: Kind of stake being placed in this transaction.
+          enum:
+            - bet
+            - tip
+            - freespin
+        round_id:
+          type: string
+          description: Optional game round identifier.
+        finished:
+          type: boolean
+          description: Set to true when this bet is the final transaction for the current round.
+    WinRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - amount
+        - currency
+        - game_id
+        - transaction_id
+        - session_id
+        - type
+      properties:
+        action:
+          type: string
+          enum:
+            - win
+        player_id:
+          type: string
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Win amount to be credited to the player wallet.
+        currency:
+          type: string
+        game_id:
+          type: string
+        transaction_id:
+          type: string
+          description: Idempotent identifier supplied by the game provider for the win.
+        session_id:
+          type: string
+        type:
+          type: string
+          description: Nature of the payout being credited.
+          enum:
+            - win
+            - jackpot
+            - freespin
+            - tournament
+            - prize
+        round_id:
+          type: string
+          description: Optional game round identifier tied to this payout.
+        finished:
+          type: boolean
+          description: Set to true when this payout closes the current round.
+    RefundRequest:
+      type: object
+      required:
+        - action
+        - player_id
+        - amount
+        - currency
+        - game_id
+        - transaction_id
+        - session_id
+        - type
+        - bet_transaction_id
+      properties:
+        action:
+          type: string
+          enum:
+            - refund
+        player_id:
+          type: string
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Amount to return to the player wallet.
+        currency:
+          type: string
+        game_id:
+          type: string
+        transaction_id:
+          type: string
+          description: Idempotent identifier supplied by the game provider for the refund operation.
+        session_id:
+          type: string
+        type:
+          type: string
+          description: Kind of stake being corrected by this refund.
+          enum:
+            - bet
+            - tip
+            - freespin
+        bet_transaction_id:
+          type: string
+          description: Original bet transaction identifier to refund.
+        finished:
+          type: boolean
+          description: Set to true when this refund finalises the current round.
+    BalanceResponse:
+      type: object
+      required:
+        - balance
+      properties:
+        balance:
+          type: number
+          format: float
+          description: Player balance converted to the game currency.
+    TransactionResponse:
+      type: object
+      required:
+        - balance
+        - transaction_id
+      properties:
+        balance:
+          type: number
+          format: double
+          description: Player's balance after the transaction.
+        transaction_id:
+          type: string
+          description: Unique refund transaction ID on the integrator side.
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Machine-friendly error code.
+        message:
+          type: string
+          description: Human-readable explanation of the error.
+        status:
+          type: integer
+          description: HTTP status code returned by the platform.

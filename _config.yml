@@ -1,0 +1,12 @@
+title: iGSP
+description: Open API standard for iGaming platforms and game providers.
+url: https://ivial98.github.io/igsp
+logo: /assets/logo.png
+color_scheme: light
+remote_theme: just-the-docs/just-the-docs@v0.6.1
+
+nav_order: 1
+search_enabled: true
+aux_links:
+  "View on GitHub":
+    - "https://github.com/yourname/igsp"
